@@ -9,9 +9,10 @@ const userInput = () => {
   let ret = [];
   rl.prompt();
   rl.on('line', (input) => {
-    console.log(`Received: ${input}`);
+    // console.log(`Received: ${input}`);
     ret = input.split(' ');
     rl.emit('preprocessing', ret);
+    console.log();
     rl.prompt();
   }).on('SIGINT', () => {
     rl.question('Are you sure you want to exit? ', (answer) => {
@@ -39,21 +40,14 @@ const inputPreprocessing = (...arg) => {
     if (matchDir) direction = matchDir[1].toUpperCase();
     else          throw('Direction is not a valid value.')
 
-    console.log('Res: ', word, numb, direction);
+    // console.log('Res: ', word, numb, direction);
     return [word, numb, direction];
   } catch (msg) {
     console.log('Error(pushString): ', msg);
   }
 }
 
-const main = () => {
-  userInput();
-  
-}
-
-rl.on('pushString', (ops) => {
-  console.log("pushString: ", ops);
-
+const pushString = (ops) => {
   let word, numb, direction;
   [word, numb, direction] = ops;
 
@@ -72,15 +66,22 @@ rl.on('pushString', (ops) => {
     }
   });
 
-  console.log(word);
+  console.log(word.join(''));
+}
+
+const main = () => {
+  userInput();
+}
+
+rl.on('pushString', (ops) => {
+  // console.log("pushString: ", ops);
+  pushString(ops);
 });
 
 rl.on('preprocessing', (param) => {
-  console.log("Event work!: ", param);
-
+  // console.log("Event work!: ", param);
   const ops = inputPreprocessing(...param);
   rl.emit('pushString', ops);
 });
-
 
 main();
