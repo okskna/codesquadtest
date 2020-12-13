@@ -8,13 +8,15 @@ const rl = readline.createInterface({
 const Cube = class {
   constructor() {
     this.cube = [
-      new Plane([['B', 'B', 'B'], ['B', 'B', 'B'], ['B', 'B', 'B']], 'U'),
-      new Plane([['R', 'R', 'R'], ['R', 'R', 'R'], ['R', 'R', 'R']], 'D'), 
-      new Plane([['W', 'W', 'W'], ['W', 'W', 'W'], ['W', 'W', 'W']], 'R'), 
-      new Plane([['O', 'O', 'O'], ['O', 'O', 'O'], ['O', 'O', 'O']], 'L'), 
-      new Plane([['G', 'G', 'G'], ['G', 'G', 'G'], ['G', 'G', 'G']], 'F'), 
-      new Plane([['Y', 'Y', 'Y'], ['Y', 'Y', 'Y'], ['Y', 'Y', 'Y']], 'B')
+      new Plane([['B', 'B', 'B'], ['B', 'B', 'B'], ['B', 'B', 'B']], 'U'), 
+      new Plane([['Y', 'Y', 'Y'], ['Y', 'Y', 'Y'], ['Y', 'Y', 'Y']], 'L'),
+      new Plane([['W', 'W', 'W'], ['W', 'W', 'W'], ['W', 'W', 'W']], 'F'),
+      new Plane([['O', 'O', 'O'], ['O', 'O', 'O'], ['O', 'O', 'O']], 'R'), 
+      new Plane([['G', 'G', 'G'], ['G', 'G', 'G'], ['G', 'G', 'G']], 'B'), 
+      new Plane([['R', 'R', 'R'], ['R', 'R', 'R'], ['R', 'R', 'R']], 'D')
     ];
+
+    this.print();
   }
 
   shuffle = () => {}
@@ -23,11 +25,71 @@ const Cube = class {
     let defaultDir;
     switch (side) {
       case 'U':
+        let idx1, idx2;
+        let colors = [];
+        let tempPlane;
+        this.cube.forEach( plane => {
+          if        (plane.pos === 'F') {
+            idx1 = [0, 0, 0];
+            idx2 = [0, 1, 2];
+
+            if (colors.length === 0) {
+              colors = [plane.plane[0]];
+              tempPlane = plane;
+            }
+          } else if (plane.pos === 'R') {
+            idx1 = [0, 0, 0];
+            idx2 = [0, 1, 2];
+
+            if (colors.length === 0) {
+              colors = [plane.plane[0]];
+              tempPlane = plane;
+            }
+          } else if (plane.pos === 'B') {
+            idx1 = [0, 0, 0];
+            idx2 = [0, 1, 2];
+
+            if (colors.length === 0) {
+              colors = [plane.plane[0]];
+              tempPlane = plane;
+            }
+          } else if (plane.pos === 'L') {
+            idx1 = [0, 0, 0];
+            idx2 = [0, 1, 2];
+
+            if (colors.length === 0) {
+              colors = [plane.plane[0]];
+              tempPlane = plane;
+            }
+          }
+
+          let tempColors = plane.get(idx1, idx2);
+          plane.insert(colors, idx1, idx2);
+          colors = tempColors;
+        });
+        tempPlane.insert(colors, idx1, idx2);
+
         break;
       
       case 'Q':
         rl.emit('close');
     }
+  }
+
+  print = () => {
+    this.cube[0].print();
+    for (let i = 0; i < 3; ++i) {
+      let printStr = "";
+      this.cube.forEach( (plane, idx) => {
+        if (idx > 0 && idx < 5) {
+          // console.log('Test: ', plane.plane[i].join(' '));
+          printStr += plane.plane[i].join(' ') + '   ';
+        }
+      })
+      console.log(printStr);
+    }
+    console.log();
+    this.cube[5].print();
   }
 }
 
@@ -35,7 +97,7 @@ const Plane = class {
   constructor (plane, pos) {
     this.plane = plane;
     this.pos = pos;
-    this.print();
+    // this.print();
   }
 
   insert = (colors, idx1, idx2) => {
@@ -87,6 +149,8 @@ const inputPreprocessing = (...ops) => {
     } else if (op === '`') {
       pre.push(pre.pop() + '`');
       return pre;
+    } else if (op === '2') {
+      pre.push(pre[pre.length - 1]);
     } else {
       throw('An invalid value was entered.');
     }
@@ -97,18 +161,18 @@ const inputPreprocessing = (...ops) => {
 }
 
 const main = () => {
-  const plane = new Plane();
+  const cube = new Cube();
 
-  rl.on('execute', (ops) => {
-    // console.log("execute: ", ops);
+  // rl.on('execute', (ops) => {
+  //   // console.log("execute: ", ops);
     
-    ops.forEach( op => {
-      let dir = op[op.length - 1] === '`' ? 'R' : 'L';
+  //   ops.forEach( op => {
+  //     let dir = op[op.length - 1] === '`' ? 'R' : 'L';
 
-      plane.turn(op[0], dir);
-      plane.print();
-    })
-  });
+  //     plane.turn(op[0], dir);
+  //     plane.print();
+  //   })
+  // });
   
   rl.on('preprocessing', (param) => {
     // console.log("Event work!: ", param);
