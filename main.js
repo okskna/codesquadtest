@@ -20,6 +20,17 @@ const Cube = class {
     this.print();
   }
 
+  complete = () => {
+    let sumOfCompletePlane = 0;
+    this.cube.forEach( plane => {
+      if (plane.complete()) sumOfCompletePlane += 1;
+    })
+    if (sumOfCompletePlane === 6) {
+      return true;
+    }
+    return false;
+  }
+
   shuffle = () => {
     const opInTheBox = ['U', 'F', 'R', 'B', 'L', 'D'];
     let randomOpList = [];
@@ -234,6 +245,18 @@ const Plane = class {
     // this.print();
   }
 
+  complete = () => {
+    let sumOfSameEle = 0;
+    this.plane.forEach( row => {
+      row.forEach( ele => {
+        if (ele === this.plane[0][0]) sumOfSameEle += 1;
+      })
+    });
+    if (sumOfSameEle === 9) 
+      return true;
+    return false;
+  }
+
   insert = (colors, idx1, idx2) => {
     this.plane[idx1[0]][idx2[0]] = colors[0];
     this.plane[idx1[1]][idx2[1]] = colors[1];
@@ -298,6 +321,11 @@ const inputPreprocessing = (...ops) => {
 const main = () => {
   const cube = new Cube();
 
+  rl.on('complete', () => {
+    console.log('Congratuation~!!');
+    process.exit(0);
+  })
+
   rl.on('execute', (ops) => {
     // console.log("execute: ", ops);
     
@@ -306,6 +334,10 @@ const main = () => {
 
       cube.turn(op[0], dir);
       cube.print();
+
+      if (cube.complete()) {
+        rl.emit('complete');
+      }
     })
   });
   
