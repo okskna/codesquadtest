@@ -16,10 +16,30 @@ const Cube = class {
       new Plane([['R', 'R', 'R'], ['R', 'R', 'R'], ['R', 'R', 'R']], 'D')
     ];
 
+    this.shuffle();
     this.print();
   }
 
-  shuffle = () => {}
+  shuffle = () => {
+    const opInTheBox = ['U', 'F', 'R', 'B', 'L', 'D'];
+    let randomOpList = [];
+
+    const opSize = Math.floor(Math.random() * (11 - 5) + 5);
+
+    Array(opSize).fill(0).forEach( _ => {
+      randomOpList.push(opInTheBox[ Math.floor(Math.random() * (5 - 0 + 1) )]);
+    });
+    
+    let shuffleList = [];
+    randomOpList.forEach( op => {
+      let dir = Math.floor(Math.random() * 2) === 0 ? 'R' : 'L';
+      this.turn(op, dir);
+
+      shuffleList.push(dir === 'R' ? op : op + '`');
+    });
+
+    console.log('Cube: shuffle: randomOpList: ', shuffleList);
+  }
 
   turn = (side, dir) => {
     let idx1, idx2;
@@ -29,6 +49,7 @@ const Cube = class {
     switch (side) {
       case 'U':
         swapDirList = [1, 2, 3, 4];
+        if (dir === 'L') swapDirList = swapDirList.reverse();
 
         swapDirList.forEach( (planeIdx, idx) => {
           if (idx === 0) {
@@ -37,18 +58,20 @@ const Cube = class {
             idx1 = [0, 0, 0];
             idx2 = [0, 1, 2];
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            // console.log('Cube: turn: tempColors: ', tempColors, colors);
             this.cube[planeIdx].insert(colors, idx1, idx2);
             colors = tempColors;
           }
         });
-        console.log('Cube: turn: tempColors: ', colors);
+        // console.log('Cube: turn: tempColors: ', colors);
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
 
         break;
 
       case 'D':
         swapDirList = [1, 4, 3, 2];
+        if (dir === 'L') swapDirList = swapDirList.reverse();
+
         swapDirList.forEach( (planeIdx, idx) => {
           if (idx === 0) {
             colors = this.cube[planeIdx].plane[2];
@@ -56,18 +79,20 @@ const Cube = class {
             idx1 = [2, 2, 2];
             idx2 = [0, 1, 2];
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            // console.log('Cube: turn: tempColors: ', tempColors, colors);
             this.cube[planeIdx].insert(colors, idx1, idx2);
             colors = tempColors;
           }
         });
-        console.log('Cube: turn: tempColors: ', colors);
+        // console.log('Cube: turn: tempColors: ', colors);
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
 
         break;
 
       case 'R':
         swapDirList = [1, 0, 3, 5];
+        if (dir === 'L') swapDirList = swapDirList.reverse();
+
         swapDirList.forEach( (planeIdx, idx) => {
           idx1 = [0, 1, 2];
           idx2 = [2, 2, 2];
@@ -79,18 +104,20 @@ const Cube = class {
               idx2 = [0, 0, 0];
             }
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            // console.log('Cube: turn: tempColors: ', tempColors, colors);
             this.cube[planeIdx].insert(colors, idx1, idx2);
             colors = tempColors;
           }
         });
-        console.log('Cube: turn: tempColors: ', colors);
+        // console.log('Cube: turn: tempColors: ', colors);
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
 
         break;
 
       case 'L':
         swapDirList = [1, 5, 3, 0];
+        if (dir === 'L') swapDirList = swapDirList.reverse();
+
         swapDirList.forEach( (planeIdx, idx) => {
           idx1 = [0, 1, 2];
           idx2 = [0, 0, 0];
@@ -102,18 +129,20 @@ const Cube = class {
               idx2 = [2, 2, 2];
             }
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            // console.log('Cube: turn: tempColors: ', tempColors, colors);
             this.cube[planeIdx].insert(colors, idx1, idx2);
             colors = tempColors;
           }
         });
-        console.log('Cube: turn: tempColors: ', colors);
+        // console.log('Cube: turn: tempColors: ', colors);
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
 
         break;
 
       case 'F':
         swapDirList = [0, 2, 5, 4];
+        if (dir === 'L') swapDirList = [0, 4, 5, 2];
+
         swapDirList.forEach( (planeIdx, idx) => {
           if (idx === 0) {
             idx1 = [2, 2, 2];
@@ -131,12 +160,12 @@ const Cube = class {
               idx2 = [2, 2, 2];
             }
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            // console.log('Cube: turn: tempColors: ', tempColors, colors);
             this.cube[planeIdx].insert(colors, idx1, idx2);
             colors = tempColors;
           }
         });
-        console.log('Cube: turn: tempColors: ', colors);
+        // console.log('Cube: turn: tempColors: ', colors);
         idx1 = [2, 2, 2];
         idx2 = [0, 1, 2];
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
@@ -145,6 +174,8 @@ const Cube = class {
 
       case 'B':
         swapDirList = [0, 4, 5, 2];
+        if (dir === 'L') swapDirList = [0, 2, 5, 4];
+
         swapDirList.forEach( (planeIdx, idx) => {
           if (idx === 0) {
             idx1 = [0, 0, 0];
@@ -162,12 +193,12 @@ const Cube = class {
               idx2 = [0, 0, 0];
             }
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            // console.log('Cube: turn: tempColors: ', tempColors, colors);
             this.cube[planeIdx].insert(colors, idx1, idx2);
             colors = tempColors;
           }
         });
-        console.log('Cube: turn: tempColors: ', colors);
+        // console.log('Cube: turn: tempColors: ', colors);
         idx1 = [0, 0, 0];
         idx2 = [0, 1, 2];
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
