@@ -18,6 +18,19 @@ const Cube = class {
 
     this.shuffle();
     this.print();
+    this.min = 0;
+    this.sec = 0;
+    this.controlCount = 0;
+  }
+
+  timer = () => {
+    setInterval(() => {
+      this.sec += 1;
+      if (this.sec >= 60) {
+        this.sec -= 60;
+        this.min += 1;
+      }
+    }, 1000);
   }
 
   complete = () => {
@@ -53,6 +66,8 @@ const Cube = class {
   }
 
   turn = (side, dir) => {
+    this.controlCount += 1;
+
     let idx1, idx2;
     let colors = [];
     let tempPlane;
@@ -235,6 +250,7 @@ const Cube = class {
     }
     console.log();
     this.cube[5].print();
+    console.log('-----------------------------------------');
   }
 }
 
@@ -323,6 +339,8 @@ const main = () => {
 
   rl.on('complete', () => {
     console.log('Congratuation~!!');
+    console.log('경과시간: ', cube.min + ':' + cube.sec );
+    console.log('조작개수: ', cube.controlCount);
     process.exit(0);
   })
 
@@ -352,6 +370,7 @@ const main = () => {
   });
 
   userInput();
+  cube.timer();
 }
 
 main();
