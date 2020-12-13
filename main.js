@@ -29,6 +29,7 @@ const Cube = class {
     switch (side) {
       case 'U':
         swapDirList = [1, 2, 3, 4];
+
         swapDirList.forEach( (planeIdx, idx) => {
           if (idx === 0) {
             colors = this.cube[planeIdx].plane[0];
@@ -61,6 +62,114 @@ const Cube = class {
           }
         });
         console.log('Cube: turn: tempColors: ', colors);
+        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+
+        break;
+
+      case 'R':
+        swapDirList = [1, 0, 3, 5];
+        swapDirList.forEach( (planeIdx, idx) => {
+          idx1 = [0, 1, 2];
+          idx2 = [2, 2, 2];
+          if (idx === 0) {
+            colors = this.cube[planeIdx].get(idx1, idx2);
+          } else {
+            if (planeIdx === 3) {
+              idx1 = [0, 1, 2];
+              idx2 = [0, 0, 0];
+            }
+            let tempColors = this.cube[planeIdx].get(idx1, idx2);
+            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            this.cube[planeIdx].insert(colors, idx1, idx2);
+            colors = tempColors;
+          }
+        });
+        console.log('Cube: turn: tempColors: ', colors);
+        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+
+        break;
+
+      case 'L':
+        swapDirList = [1, 5, 3, 0];
+        swapDirList.forEach( (planeIdx, idx) => {
+          idx1 = [0, 1, 2];
+          idx2 = [0, 0, 0];
+          if (idx === 0) {
+            colors = this.cube[planeIdx].get(idx1, idx2);
+          } else {
+            if (planeIdx === 3) {
+              idx1 = [0, 1, 2];
+              idx2 = [2, 2, 2];
+            }
+            let tempColors = this.cube[planeIdx].get(idx1, idx2);
+            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            this.cube[planeIdx].insert(colors, idx1, idx2);
+            colors = tempColors;
+          }
+        });
+        console.log('Cube: turn: tempColors: ', colors);
+        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+
+        break;
+
+      case 'F':
+        swapDirList = [0, 2, 5, 4];
+        swapDirList.forEach( (planeIdx, idx) => {
+          if (idx === 0) {
+            idx1 = [2, 2, 2];
+            idx2 = [0, 1, 2];
+            colors = this.cube[planeIdx].get(idx1, idx2);
+          } else {
+            if        (planeIdx === 2) {
+              idx1 = [0, 1, 2];
+              idx2 = [0, 0, 0];
+            } else if (planeIdx === 5) {
+              idx1 = [0, 0, 0];
+              idx2 = [0, 1, 2];
+            } else if (planeIdx === 4) {
+              idx1 = [0, 1, 2];
+              idx2 = [2, 2, 2];
+            }
+            let tempColors = this.cube[planeIdx].get(idx1, idx2);
+            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            this.cube[planeIdx].insert(colors, idx1, idx2);
+            colors = tempColors;
+          }
+        });
+        console.log('Cube: turn: tempColors: ', colors);
+        idx1 = [2, 2, 2];
+        idx2 = [0, 1, 2];
+        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+
+        break;
+
+      case 'B':
+        swapDirList = [0, 4, 5, 2];
+        swapDirList.forEach( (planeIdx, idx) => {
+          if (idx === 0) {
+            idx1 = [0, 0, 0];
+            idx2 = [0, 1, 2];
+            colors = this.cube[planeIdx].get(idx1, idx2);
+          } else {
+            if        (planeIdx === 2) {
+              idx1 = [0, 1, 2];
+              idx2 = [2, 2, 2];
+            } else if (planeIdx === 5) {
+              idx1 = [2, 2, 2];
+              idx2 = [0, 1, 2];
+            } else if (planeIdx === 4) {
+              idx1 = [0, 1, 2];
+              idx2 = [0, 0, 0];
+            }
+            let tempColors = this.cube[planeIdx].get(idx1, idx2);
+            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            this.cube[planeIdx].insert(colors, idx1, idx2);
+            colors = tempColors;
+          }
+        });
+        console.log('Cube: turn: tempColors: ', colors);
+        idx1 = [0, 0, 0];
+        idx2 = [0, 1, 2];
         this.cube[swapDirList[0]].insert(colors, idx1, idx2);
 
         break;
@@ -162,7 +271,7 @@ const main = () => {
     // console.log("execute: ", ops);
     
     ops.forEach( op => {
-      let dir = op[op.length - 1] === '`' ? 'R' : 'L';
+      let dir = op[op.length - 1] === '`' ? 'L' : 'R';
 
       cube.turn(op[0], dir);
       cube.print();
