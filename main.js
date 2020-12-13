@@ -95,7 +95,7 @@ const inputPreprocessing = (...ops) => {
   
   let ret = ops.reduce( (pre, op) => {
     if (op.match(/(U|R|L|B|Q)/i)) {
-      pre.push(op);
+      pre.push(op.toUpperCase());
       return pre;
     } else if (op === '`') {
       pre.push(pre.pop() + '`');
