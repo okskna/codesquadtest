@@ -5,6 +5,61 @@ const rl = readline.createInterface({
   prompt: 'CUBE> '
 });
 
+const Plane = class {
+  constructor () {
+    this.plane = [['R', 'R', 'W'], ['G', 'C', 'W'], ['G', 'B', 'B']];
+  }
+
+  turn = (side, dir) => {
+    let defaultDir;
+    switch (side) {
+      case 'U':
+        // 왼쪽
+        defaultDir = [0, 1, 2];
+        if (dir === 'R') defaultDir = defaultDir.reverse();
+
+        this._swap(0, defaultDir);
+        break;
+      case 'B':
+        // 오른쪽
+        defaultDir = [2, 1, 0];
+        if (dir === 'R') defaultDir = defaultDir.reverse();
+
+        this._swap(2, defaultDir);
+        break;
+      case 'R':
+        // 위
+        defaultDir = [0, 1, 2];
+        if (dir === 'R') defaultDir = defaultDir.reverse();
+
+        this._swap(defaultDir, 2);
+        break;
+      case 'L':
+        // 아래
+        defaultDir = [2, 1, 0];
+        if (dir === 'R') defaultDir = defaultDir.reverse();
+
+        this._swap(defaultDir, 0);
+        break;
+    }
+  }
+
+  _swap = (idx1, idx2) => {
+    if (typeof idx1 === 'number') {
+      let temp = this.plane[idx1][idx2[0]];
+      this.plane[idx1][idx2[0]] = this.plane[idx1][idx2[1]];
+      this.plane[idx1][idx2[1]] = this.plane[idx1][idx2[2]];
+      this.plane[idx1][idx2[2]] = temp;
+    } else {
+      let temp = this.plane[idx1[0]][idx2];
+      this.plane[idx1[0]][idx2] = this.plane[idx1[1]][idx2];
+      this.plane[idx1[1]][idx2] = this.plane[idx1[2]][idx2];
+      this.plane[idx1[2]][idx2] = temp;
+    }
+    
+  }
+}
+
 const userInput = () => {
   let ret = [];
   rl.prompt();
@@ -45,28 +100,42 @@ const inputPreprocessing = (...ops) => {
 }
 
 const pushString = (ops) => {
-  let word, numb, direction;
-  [word, numb, direction] = ops;
-
-  direction = direction === 'L' ? -1 : 1;
-
-  const wordLength = word.length;
-  const popTimes = (numb * direction) % wordLength;
-
-  Array(Math.abs(popTimes)).fill(0).forEach( () => {
-    if (popTimes < 0) {
-      let firstItem = word.shift();
-      word.push(firstItem);
-    } else if (popTimes > 0) {
-      let lastItem = word.pop();
-      word.unshift(lastItem);
-    }
+  ops.reduce( (pre, op) => {
+    let direction = op[op.length - 1] === '`' ? 'R' : 'L';
   });
-
-  console.log(word.join(''));
 }
 
 const main = () => {
+  const plane = new Plane();
+  // console.log(plane.plane);
+  // plane.turn('U', 'L');
+  // console.log(plane.plane);
+  // plane.turn('U', 'L');
+  // console.log(plane.plane);
+  // plane.turn('R', 'L');
+  // console.log(plane.plane);
+
+  // console.log();
+
+  // plane.turn('U', 'L');
+  // console.log(plane.plane);
+  // plane.turn('B', 'L');
+  // console.log(plane.plane);
+  // plane.turn('R', 'L');
+  // console.log(plane.plane);
+  // plane.turn('L', 'L');
+  // console.log(plane.plane);
+
+  // console.log();
+
+  // plane.turn('U', 'R');
+  // console.log(plane.plane);
+  // plane.turn('B', 'R');
+  // console.log(plane.plane);
+  // plane.turn('R', 'R');
+  // console.log(plane.plane);
+  // plane.turn('L', 'R');
+  // console.log(plane.plane);
   userInput();
 }
 
