@@ -27,25 +27,21 @@ const userInput = () => {
 }
 
 const inputPreprocessing = (...ops) => {
-  try {
-    let ret = ops.reduce( (pre, op) => {
-      if (op.match(/(U|R|L|B)/g)) {
-        pre.push(op)
-        return pre;
-      } else if (op === '`') {
-        pre.push(pre.pop() + '`');
-        return pre;
-      } else if (op === 'Q') {
-        rl.emit('close');
-      } else {
-        throw('An invalid value was entered.');
-      }
-    }, [] );
+  
+  let ret = ops.reduce( (pre, op) => {
+    if (op.match(/(U|R|L|B|Q)/i)) {
+      pre.push(op);
+      return pre;
+    } else if (op === '`') {
+      pre.push(pre.pop() + '`');
+      return pre;
+    } else {
+      throw('An invalid value was entered.');
+    }
+  }, [] );
 
-    console.log(ret);
-  } catch (msg) {
-    console.log('Error: ', msg);
-  }
+  console.log('inputPreprocessing ret: ', ret);
+  return ret;
 }
 
 const pushString = (ops) => {
@@ -81,8 +77,12 @@ rl.on('pushString', (ops) => {
 
 rl.on('preprocessing', (param) => {
   // console.log("Event work!: ", param);
-  const ops = inputPreprocessing(...param);
-  rl.emit('pushString', ops);
+  try {
+    const ops = inputPreprocessing(...param);
+    rl.emit('pushString', ops);
+  } catch (msg) {
+    console.log('Error: ', msg);
+  }
 });
 
 main();
