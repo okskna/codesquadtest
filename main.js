@@ -9,10 +9,10 @@ const Cube = class {
   constructor() {
     this.cube = [
       new Plane([['B', 'B', 'B'], ['B', 'B', 'B'], ['B', 'B', 'B']], 'U'), 
-      new Plane([['Y', 'Y', 'Y'], ['Y', 'Y', 'Y'], ['Y', 'Y', 'Y']], 'L'),
       new Plane([['W', 'W', 'W'], ['W', 'W', 'W'], ['W', 'W', 'W']], 'F'),
       new Plane([['O', 'O', 'O'], ['O', 'O', 'O'], ['O', 'O', 'O']], 'R'), 
       new Plane([['G', 'G', 'G'], ['G', 'G', 'G'], ['G', 'G', 'G']], 'B'), 
+      new Plane([['Y', 'Y', 'Y'], ['Y', 'Y', 'Y'], ['Y', 'Y', 'Y']], 'L'),
       new Plane([['R', 'R', 'R'], ['R', 'R', 'R'], ['R', 'R', 'R']], 'D')
     ];
 
@@ -22,55 +22,49 @@ const Cube = class {
   shuffle = () => {}
 
   turn = (side, dir) => {
-    let defaultDir;
+    let idx1, idx2;
+    let colors = [];
+    let tempPlane;
+    let swapDirList = [];
     switch (side) {
       case 'U':
-        let idx1, idx2;
-        let colors = [];
-        let tempPlane;
-        this.cube.forEach( plane => {
-          if        (plane.pos === 'F') {
+        swapDirList = [1, 2, 3, 4];
+        swapDirList.forEach( (planeIdx, idx) => {
+          if (idx === 0) {
+            colors = this.cube[planeIdx].plane[0];
+          } else {
             idx1 = [0, 0, 0];
             idx2 = [0, 1, 2];
-
-            if (colors.length === 0) {
-              colors = [plane.plane[0]];
-              tempPlane = plane;
-            }
-          } else if (plane.pos === 'R') {
-            idx1 = [0, 0, 0];
-            idx2 = [0, 1, 2];
-
-            if (colors.length === 0) {
-              colors = [plane.plane[0]];
-              tempPlane = plane;
-            }
-          } else if (plane.pos === 'B') {
-            idx1 = [0, 0, 0];
-            idx2 = [0, 1, 2];
-
-            if (colors.length === 0) {
-              colors = [plane.plane[0]];
-              tempPlane = plane;
-            }
-          } else if (plane.pos === 'L') {
-            idx1 = [0, 0, 0];
-            idx2 = [0, 1, 2];
-
-            if (colors.length === 0) {
-              colors = [plane.plane[0]];
-              tempPlane = plane;
-            }
+            let tempColors = this.cube[planeIdx].get(idx1, idx2);
+            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            this.cube[planeIdx].insert(colors, idx1, idx2);
+            colors = tempColors;
           }
-
-          let tempColors = plane.get(idx1, idx2);
-          plane.insert(colors, idx1, idx2);
-          colors = tempColors;
         });
-        tempPlane.insert(colors, idx1, idx2);
+        console.log('Cube: turn: tempColors: ', colors);
+        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
 
         break;
-      
+
+      case 'D':
+        swapDirList = [1, 4, 3, 2];
+        swapDirList.forEach( (planeIdx, idx) => {
+          if (idx === 0) {
+            colors = this.cube[planeIdx].plane[2];
+          } else {
+            idx1 = [2, 2, 2];
+            idx2 = [0, 1, 2];
+            let tempColors = this.cube[planeIdx].get(idx1, idx2);
+            console.log('Cube: turn: tempColors: ', tempColors, colors);
+            this.cube[planeIdx].insert(colors, idx1, idx2);
+            colors = tempColors;
+          }
+        });
+        console.log('Cube: turn: tempColors: ', colors);
+        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+
+        break;
+
       case 'Q':
         rl.emit('close');
     }
@@ -107,6 +101,7 @@ const Plane = class {
   }
 
   get = (idx1, idx2) => {
+    // console.log("plane class: get: ", idx1, idx2);
     return [ this.plane[idx1[0]][idx2[0]], this.plane[idx1[1]][idx2[1]], this.plane[idx1[2]][idx2[2]] ];
   }
 
@@ -143,7 +138,7 @@ const userInput = () => {
 const inputPreprocessing = (...ops) => {
   
   let ret = ops.reduce( (pre, op) => {
-    if (op.match(/(U|R|F|Q)/i)) {
+    if (op.match(/(U|R|F|D|L|B|Q)/i)) {
       pre.push(op.toUpperCase());
       return pre;
     } else if (op === '`') {
@@ -163,16 +158,16 @@ const inputPreprocessing = (...ops) => {
 const main = () => {
   const cube = new Cube();
 
-  // rl.on('execute', (ops) => {
-  //   // console.log("execute: ", ops);
+  rl.on('execute', (ops) => {
+    // console.log("execute: ", ops);
     
-  //   ops.forEach( op => {
-  //     let dir = op[op.length - 1] === '`' ? 'R' : 'L';
+    ops.forEach( op => {
+      let dir = op[op.length - 1] === '`' ? 'R' : 'L';
 
-  //     plane.turn(op[0], dir);
-  //     plane.print();
-  //   })
-  // });
+      cube.turn(op[0], dir);
+      cube.print();
+    })
+  });
   
   rl.on('preprocessing', (param) => {
     // console.log("Event work!: ", param);
