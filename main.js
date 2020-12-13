@@ -2,15 +2,15 @@ const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
-  prompt: '> '
+  prompt: 'CUBE> '
 });
 
 const userInput = () => {
   let ret = [];
   rl.prompt();
   rl.on('line', (input) => {
-    // console.log(`Received: ${input}`);
-    ret = input.split(' ');
+    console.log(`Received: ${input}`);
+    ret = input.split('');
     rl.emit('preprocessing', ret);
     console.log();
     rl.prompt();
@@ -18,32 +18,33 @@ const userInput = () => {
     rl.question('Are you sure you want to exit? ', (answer) => {
       if (answer.match(/^y(es)?$/i)) rl.pause();
     });
+  }).on('close', () => {
+    console.log('Bye~');
+    process.exit(0);
   });
 
   return ret;
 }
 
-const inputPreprocessing = (...arg) => {
+const inputPreprocessing = (...ops) => {
   try {
-    let word, numb, direction;
-    [word, numb, direction] = arg;
+    let ret = ops.reduce( (pre, op) => {
+      if (op.match(/(U|R|L|B)/g)) {
+        pre.push(op)
+        return pre;
+      } else if (op === '`') {
+        pre.push(pre.pop() + '`');
+        return pre;
+      } else if (op === 'Q') {
+        rl.emit('close');
+      } else {
+        throw('An invalid value was entered.');
+      }
+    }, [] );
 
-    if (!word || !numb || !direction) throw('Not enough arguments.');
-    
-    word = word.split('');
-    const numbInt = parseInt(numb);
-    if (numbInt === numbInt) numb = parseInt(numb);
-    else                     throw('Numb is not a valid value.');
-
-    // console.log(direction.match(/^(l|r)(eft|ight)?$/i));
-    const matchDir = direction.match(/^(l|r)(eft|ight)?$/i);
-    if (matchDir) direction = matchDir[1].toUpperCase();
-    else          throw('Direction is not a valid value.')
-
-    // console.log('Res: ', word, numb, direction);
-    return [word, numb, direction];
+    console.log(ret);
   } catch (msg) {
-    console.log('Error(pushString): ', msg);
+    console.log('Error: ', msg);
   }
 }
 
