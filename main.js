@@ -5,60 +5,47 @@ const rl = readline.createInterface({
   prompt: 'CUBE> '
 });
 
-const Plane = class {
-  constructor () {
-    this.plane = [['R', 'R', 'W'], ['G', 'C', 'W'], ['G', 'B', 'B']];
-    this.print();
+const Cube = class {
+  constructor() {
+    this.cube = [
+      new Plane([['B', 'B', 'B'], ['B', 'B', 'B'], ['B', 'B', 'B']], 'U'),
+      new Plane([['R', 'R', 'R'], ['R', 'R', 'R'], ['R', 'R', 'R']], 'D'), 
+      new Plane([['W', 'W', 'W'], ['W', 'W', 'W'], ['W', 'W', 'W']], 'R'), 
+      new Plane([['O', 'O', 'O'], ['O', 'O', 'O'], ['O', 'O', 'O']], 'L'), 
+      new Plane([['G', 'G', 'G'], ['G', 'G', 'G'], ['G', 'G', 'G']], 'F'), 
+      new Plane([['Y', 'Y', 'Y'], ['Y', 'Y', 'Y'], ['Y', 'Y', 'Y']], 'B')
+    ];
   }
+
+  shuffle = () => {}
 
   turn = (side, dir) => {
     let defaultDir;
     switch (side) {
       case 'U':
-        // 왼쪽
-        defaultDir = [0, 1, 2];
-        if (dir === 'R') defaultDir = defaultDir.reverse();
-
-        this._swap(0, defaultDir);
         break;
-      case 'B':
-        // 오른쪽
-        defaultDir = [2, 1, 0];
-        if (dir === 'R') defaultDir = defaultDir.reverse();
-
-        this._swap(2, defaultDir);
-        break;
-      case 'R':
-        // 위
-        defaultDir = [0, 1, 2];
-        if (dir === 'R') defaultDir = defaultDir.reverse();
-
-        this._swap(defaultDir, 2);
-        break;
-      case 'L':
-        // 아래
-        defaultDir = [2, 1, 0];
-        if (dir === 'R') defaultDir = defaultDir.reverse();
-
-        this._swap(defaultDir, 0);
-        break;
+      
       case 'Q':
         rl.emit('close');
     }
   }
+}
 
-  _swap = (idx1, idx2) => {
-    if (typeof idx1 === 'number') {
-      let temp = this.plane[idx1][idx2[0]];
-      this.plane[idx1][idx2[0]] = this.plane[idx1][idx2[1]];
-      this.plane[idx1][idx2[1]] = this.plane[idx1][idx2[2]];
-      this.plane[idx1][idx2[2]] = temp;
-    } else {
-      let temp = this.plane[idx1[0]][idx2];
-      this.plane[idx1[0]][idx2] = this.plane[idx1[1]][idx2];
-      this.plane[idx1[1]][idx2] = this.plane[idx1[2]][idx2];
-      this.plane[idx1[2]][idx2] = temp;
-    }
+const Plane = class {
+  constructor (plane, pos) {
+    this.plane = plane;
+    this.pos = pos;
+    this.print();
+  }
+
+  insert = (colors, idx1, idx2) => {
+    this.plane[idx1[0]][idx2[0]] = colors[0];
+    this.plane[idx1[1]][idx2[1]] = colors[1];
+    this.plane[idx1[2]][idx2[2]] = colors[2];
+  }
+
+  get = (idx1, idx2) => {
+    return [ this.plane[idx1[0]][idx2[0]], this.plane[idx1[1]][idx2[1]], this.plane[idx1[2]][idx2[2]] ];
   }
 
   print = () => {
@@ -94,7 +81,7 @@ const userInput = () => {
 const inputPreprocessing = (...ops) => {
   
   let ret = ops.reduce( (pre, op) => {
-    if (op.match(/(U|R|L|B|Q)/i)) {
+    if (op.match(/(U|R|F|Q)/i)) {
       pre.push(op.toUpperCase());
       return pre;
     } else if (op === '`') {
