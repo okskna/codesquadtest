@@ -8,6 +8,7 @@ const rl = readline.createInterface({
 const Plane = class {
   constructor () {
     this.plane = [['R', 'R', 'W'], ['G', 'C', 'W'], ['G', 'B', 'B']];
+    this.print();
   }
 
   turn = (side, dir) => {
@@ -41,6 +42,8 @@ const Plane = class {
 
         this._swap(defaultDir, 0);
         break;
+      case 'Q':
+        rl.emit('close');
     }
   }
 
@@ -56,7 +59,14 @@ const Plane = class {
       this.plane[idx1[1]][idx2] = this.plane[idx1[2]][idx2];
       this.plane[idx1[2]][idx2] = temp;
     }
+  }
+
+  print = () => {
+    this.plane.forEach( row => {
+      console.log(row.join(' '));
+    });
     
+    console.log();
   }
 }
 
@@ -64,7 +74,7 @@ const userInput = () => {
   let ret = [];
   rl.prompt();
   rl.on('line', (input) => {
-    console.log(`Received: ${input}`);
+    // console.log(`Received: ${input}`);
     ret = input.split('');
     rl.emit('preprocessing', ret);
     console.log();
@@ -99,59 +109,31 @@ const inputPreprocessing = (...ops) => {
   return ret;
 }
 
-const pushString = (ops) => {
-  ops.reduce( (pre, op) => {
-    let direction = op[op.length - 1] === '`' ? 'R' : 'L';
-  });
-}
-
 const main = () => {
   const plane = new Plane();
-  // console.log(plane.plane);
-  // plane.turn('U', 'L');
-  // console.log(plane.plane);
-  // plane.turn('U', 'L');
-  // console.log(plane.plane);
-  // plane.turn('R', 'L');
-  // console.log(plane.plane);
 
-  // console.log();
+  rl.on('execute', (ops) => {
+    // console.log("execute: ", ops);
+    
+    ops.forEach( op => {
+      let dir = op[op.length - 1] === '`' ? 'R' : 'L';
 
-  // plane.turn('U', 'L');
-  // console.log(plane.plane);
-  // plane.turn('B', 'L');
-  // console.log(plane.plane);
-  // plane.turn('R', 'L');
-  // console.log(plane.plane);
-  // plane.turn('L', 'L');
-  // console.log(plane.plane);
+      plane.turn(op[0], dir);
+      plane.print();
+    })
+  });
+  
+  rl.on('preprocessing', (param) => {
+    // console.log("Event work!: ", param);
+    try {
+      const ops = inputPreprocessing(...param);
+      rl.emit('execute', ops);
+    } catch (msg) {
+      console.log('Error: ', msg);
+    }
+  });
 
-  // console.log();
-
-  // plane.turn('U', 'R');
-  // console.log(plane.plane);
-  // plane.turn('B', 'R');
-  // console.log(plane.plane);
-  // plane.turn('R', 'R');
-  // console.log(plane.plane);
-  // plane.turn('L', 'R');
-  // console.log(plane.plane);
   userInput();
 }
-
-rl.on('pushString', (ops) => {
-  // console.log("pushString: ", ops);
-  pushString(ops);
-});
-
-rl.on('preprocessing', (param) => {
-  // console.log("Event work!: ", param);
-  try {
-    const ops = inputPreprocessing(...param);
-    rl.emit('pushString', ops);
-  } catch (msg) {
-    console.log('Error: ', msg);
-  }
-});
 
 main();
