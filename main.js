@@ -304,7 +304,9 @@ const userInput = () => {
     rl.prompt();
   }).on('SIGINT', () => {
     rl.question('Are you sure you want to exit? ', (answer) => {
-      if (answer.match(/^y(es)?$/i)) rl.pause();
+      if (answer.match(/^y(es)?$/i)) {
+        rl.emit('close');
+      };
     });
   }).on('close', () => {
     console.log('Bye~');
