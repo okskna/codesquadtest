@@ -180,9 +180,9 @@ const Cube = class {
               idx2 = [0, 0, 0];
             } else if (planeIdx === 5) {
               idx1 = [0, 0, 0];
-              idx2 = [0, 1, 2];
+              idx2 = [2, 1, 0];
             } else if (planeIdx === 4) {
-              idx1 = [0, 1, 2];
+              idx1 = [2, 1, 0];
               idx2 = [2, 2, 2];
             }
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
@@ -213,9 +213,9 @@ const Cube = class {
               idx2 = [2, 2, 2];
             } else if (planeIdx === 5) {
               idx1 = [2, 2, 2];
-              idx2 = [0, 1, 2];
+              idx2 = [2, 1, 0];
             } else if (planeIdx === 4) {
-              idx1 = [0, 1, 2];
+              idx1 = [2, 1, 0];
               idx2 = [0, 0, 0];
             }
             let tempColors = this.cube[planeIdx].get(idx1, idx2);
@@ -315,7 +315,7 @@ const userInput = () => {
 }
 
 const inputPreprocessing = (...ops) => {
-  
+  console.log('inputPreprocessing: ops: ', ops);
   let ret = ops.reduce( (pre, op) => {
     if (op.match(/(U|R|F|D|L|B|Q)/i)) {
       pre.push(op.toUpperCase());
@@ -324,13 +324,16 @@ const inputPreprocessing = (...ops) => {
       pre.push(pre.pop() + '`');
       return pre;
     } else if (op === '2') {
+      console.log(pre, pre[pre.length - 1]);
       pre.push(pre[pre.length - 1]);
+      console.log(pre);
+      return pre;
     } else {
       throw('An invalid value was entered.');
     }
   }, [] );
 
-  // console.log('inputPreprocessing ret: ', ret);
+  console.log('inputPreprocessing ret: ', ret);
   return ret;
 }
 
