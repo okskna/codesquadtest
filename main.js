@@ -16,11 +16,13 @@ const Cube = class {
       new Plane([['R', 'R', 'R'], ['R', 'R', 'R'], ['R', 'R', 'R']], 'D')
     ];
 
-    this.shuffle();
+    // this.shuffle();
     this.print();
+
     this.min = 0;
     this.sec = 0;
-    this.controlCount = 0;
+
+    this.turnCount = 0;
   }
 
   timer = () => {
@@ -65,170 +67,84 @@ const Cube = class {
     console.log('Cube: shuffle: randomOpList: ', shuffleList);
   }
 
-  turn = (side, dir) => {
-    this.controlCount += 1;
+  turnByDirList = (planeIdxList, planeCoordYList, planeCoordXList) => {
+    let colors;
+    planeIdxList.forEach( (planeIdx, idx) => {
+      if (idx === 0) {
+        colors = this.cube[planeIdx].get(planeCoordYList[0], planeCoordXList[0]);
+      } else {
+        let tempColors = this.cube[planeIdx].get(planeCoordYList[idx], planeCoordXList[idx]);
+        this.cube[planeIdx].insert(colors, planeCoordYList[idx], planeCoordXList[idx]);
+        colors = tempColors;
+      }
+    });
+    this.cube[planeIdxList[0]].insert(colors, planeCoordYList[0], planeCoordXList[0]);
+  }
 
-    let idx1, idx2;
-    let colors = [];
-    let tempPlane;
-    let swapDirList = [];
+  turn = (side, dir) => {
+    this.turnCount += 1;
+
+    let planeIdxList;
+    let planeCoordYList, planeCoordXList;
     switch (side) {
       case 'U':
-        swapDirList = [1, 2, 3, 4];
-        if (dir === 'L') swapDirList = swapDirList.reverse();
+        planeIdxList = [1, 2, 3, 4];
+        if (dir === 'L') planeIdxList = [1, 4, 3, 2];
 
-        swapDirList.forEach( (planeIdx, idx) => {
-          if (idx === 0) {
-            colors = this.cube[planeIdx].plane[0];
-          } else {
-            idx1 = [0, 0, 0];
-            idx2 = [0, 1, 2];
-            let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            // console.log('Cube: turn: tempColors: ', tempColors, colors);
-            this.cube[planeIdx].insert(colors, idx1, idx2);
-            colors = tempColors;
-          }
-        });
-        // console.log('Cube: turn: tempColors: ', colors);
-        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+        planeCoordYList = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        planeCoordXList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
 
+        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
         break;
 
       case 'D':
-        swapDirList = [1, 4, 3, 2];
-        if (dir === 'L') swapDirList = swapDirList.reverse();
+        planeIdxList = [1, 4, 3, 2];
+        if (dir === 'L') planeIdxList = [1, 2, 3, 4];
 
-        swapDirList.forEach( (planeIdx, idx) => {
-          if (idx === 0) {
-            colors = this.cube[planeIdx].plane[2];
-          } else {
-            idx1 = [2, 2, 2];
-            idx2 = [0, 1, 2];
-            let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            // console.log('Cube: turn: tempColors: ', tempColors, colors);
-            this.cube[planeIdx].insert(colors, idx1, idx2);
-            colors = tempColors;
-          }
-        });
-        // console.log('Cube: turn: tempColors: ', colors);
-        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+        planeCoordYList = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]];
+        planeCoordXList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
 
+        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
         break;
 
       case 'R':
-        swapDirList = [1, 0, 3, 5];
-        if (dir === 'L') swapDirList = swapDirList.reverse();
+        planeIdxList = [1, 0, 3, 5];
+        if (dir === 'L') planeIdxList = [1, 5, 3, 1];
 
-        swapDirList.forEach( (planeIdx, idx) => {
-          idx1 = [0, 1, 2];
-          idx2 = [2, 2, 2];
-          if (idx === 0) {
-            colors = this.cube[planeIdx].get(idx1, idx2);
-          } else {
-            if (planeIdx === 3) {
-              idx1 = [0, 1, 2];
-              idx2 = [0, 0, 0];
-            }
-            let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            // console.log('Cube: turn: tempColors: ', tempColors, colors);
-            this.cube[planeIdx].insert(colors, idx1, idx2);
-            colors = tempColors;
-          }
-        });
-        // console.log('Cube: turn: tempColors: ', colors);
-        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+        planeCoordYList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
+        planeCoordXList = [[2, 2, 2], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
 
+        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
         break;
 
       case 'L':
-        swapDirList = [1, 5, 3, 0];
-        if (dir === 'L') swapDirList = swapDirList.reverse();
+        planeIdxList = [1, 5, 3, 0];
+        if (dir === 'L') planeIdxList = [1, 0, 3, 5];
 
-        swapDirList.forEach( (planeIdx, idx) => {
-          idx1 = [0, 1, 2];
-          idx2 = [0, 0, 0];
-          if (idx === 0) {
-            colors = this.cube[planeIdx].get(idx1, idx2);
-          } else {
-            if (planeIdx === 3) {
-              idx1 = [0, 1, 2];
-              idx2 = [2, 2, 2];
-            }
-            let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            // console.log('Cube: turn: tempColors: ', tempColors, colors);
-            this.cube[planeIdx].insert(colors, idx1, idx2);
-            colors = tempColors;
-          }
-        });
-        // console.log('Cube: turn: tempColors: ', colors);
-        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+        planeCoordYList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
+        planeCoordXList = [[0, 0, 0], [2, 2, 2], [2, 2, 2], [2, 2, 2]];
 
+        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
         break;
 
       case 'F':
-        swapDirList = [0, 2, 5, 4];
-        if (dir === 'L') swapDirList = [0, 4, 5, 2];
+        planeIdxList = [0, 2, 5, 4];
+        if (dir === 'L') planeIdxList = [0, 4, 5, 2];
 
-        swapDirList.forEach( (planeIdx, idx) => {
-          if (idx === 0) {
-            idx1 = [2, 2, 2];
-            idx2 = [0, 1, 2];
-            colors = this.cube[planeIdx].get(idx1, idx2);
-          } else {
-            if        (planeIdx === 2) {
-              idx1 = [0, 1, 2];
-              idx2 = [0, 0, 0];
-            } else if (planeIdx === 5) {
-              idx1 = [0, 0, 0];
-              idx2 = [2, 1, 0];
-            } else if (planeIdx === 4) {
-              idx1 = [2, 1, 0];
-              idx2 = [2, 2, 2];
-            }
-            let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            // console.log('Cube: turn: tempColors: ', tempColors, colors);
-            this.cube[planeIdx].insert(colors, idx1, idx2);
-            colors = tempColors;
-          }
-        });
-        // console.log('Cube: turn: tempColors: ', colors);
-        idx1 = [2, 2, 2];
-        idx2 = [0, 1, 2];
-        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+        planeCoordYList = [[2, 2, 2], [0, 1, 2], [0, 0, 0], [2, 1, 0]];
+        planeCoordXList = [[0, 1, 2], [0, 0, 0], [2, 1, 0], [2, 2, 2]];
 
+        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
         break;
 
       case 'B':
-        swapDirList = [0, 4, 5, 2];
-        if (dir === 'L') swapDirList = [0, 2, 5, 4];
+        planeIdxList = [0, 4, 5, 2];
+        if (dir === 'L') planeIdxList = [0, 2, 5, 4];
 
-        swapDirList.forEach( (planeIdx, idx) => {
-          if (idx === 0) {
-            idx1 = [0, 0, 0];
-            idx2 = [0, 1, 2];
-            colors = this.cube[planeIdx].get(idx1, idx2);
-          } else {
-            if        (planeIdx === 2) {
-              idx1 = [0, 1, 2];
-              idx2 = [2, 2, 2];
-            } else if (planeIdx === 5) {
-              idx1 = [2, 2, 2];
-              idx2 = [2, 1, 0];
-            } else if (planeIdx === 4) {
-              idx1 = [2, 1, 0];
-              idx2 = [0, 0, 0];
-            }
-            let tempColors = this.cube[planeIdx].get(idx1, idx2);
-            // console.log('Cube: turn: tempColors: ', tempColors, colors);
-            this.cube[planeIdx].insert(colors, idx1, idx2);
-            colors = tempColors;
-          }
-        });
-        // console.log('Cube: turn: tempColors: ', colors);
-        idx1 = [0, 0, 0];
-        idx2 = [0, 1, 2];
-        this.cube[swapDirList[0]].insert(colors, idx1, idx2);
+        planeCoordYList = [[0, 0, 0], [0, 1, 2], [2, 2, 2], [2, 1, 0]];
+        planeCoordXList = [[0, 1, 2], [0, 0, 0], [2, 1, 0], [2, 2, 2]];
 
+        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
         break;
 
       case 'Q':
@@ -345,7 +261,7 @@ const main = () => {
   rl.on('complete', () => {
     console.log('Congratuation~!!');
     console.log('경과시간: ', cube.min + ':' + cube.sec );
-    console.log('조작개수: ', cube.controlCount);
+    console.log('조작개수: ', cube.turnCount);
     process.exit(0);
   })
 
