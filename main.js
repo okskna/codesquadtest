@@ -23,6 +23,39 @@ const Cube = class {
     this.sec = 0;
 
     this.turnCount = 0;
+
+    this.planeObjByOp = {
+      U: {
+        planeIdxList: [1, 2, 3, 4],
+        planeCoordYList: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+        planeCoordXList: [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]
+      }, 
+      D: {
+        planeIdxList: [1, 4, 3, 2],
+        planeCoordYList: [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]],
+        planeCoordXList: [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]
+      }, 
+      R: {
+        planeIdxList: [1, 0, 3, 5],
+        planeCoordYList: [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]],
+        planeCoordXList: [[2, 2, 2], [2, 2, 2], [0, 0, 0], [2, 2, 2]]
+      }, 
+      L: {
+        planeIdxList: [1, 5, 3, 0],
+        planeCoordYList: [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]],
+        planeCoordXList: [[0, 0, 0], [0, 0, 0], [2, 2, 2], [0, 0, 0]]
+      }, 
+      F: {
+        planeIdxList: [0, 2, 5, 4],
+        planeCoordYList: [[2, 2, 2], [0, 1, 2], [0, 0, 0], [2, 1, 0]],
+        planeCoordXList: [[0, 1, 2], [0, 0, 0], [2, 1, 0], [2, 2, 2]]
+      }, 
+      B: {
+        planeIdxList: [0, 4, 5, 2],
+        planeCoordYList: [[0, 0, 0], [0, 1, 2], [2, 2, 2], [2, 1, 0]],
+        planeCoordXList: [[0, 1, 2], [0, 0, 0], [2, 1, 0], [2, 2, 2]]
+      }
+    }
   }
 
   timer = () => {
@@ -64,7 +97,7 @@ const Cube = class {
       shuffleList.push(dir === 'R' ? op : op + '`');
     });
 
-    console.log('Cube: shuffle: randomOpList: ', shuffleList);
+    console.log('Cube: shuffle: shuffleList: ', shuffleList);
   }
 
   turnByDirList = (planeIdxList, planeCoordYList, planeCoordXList) => {
@@ -84,71 +117,12 @@ const Cube = class {
   turn = (side, dir) => {
     this.turnCount += 1;
 
-    let planeIdxList;
-    let planeCoordYList, planeCoordXList;
-    switch (side) {
-      case 'U':
-        planeIdxList = [1, 2, 3, 4];
-        if (dir === 'L') planeIdxList = [1, 4, 3, 2];
+    if (side === 'Q') rl.emit('close');
+    else {
+      let { planeIdxList, planeCoordYList, planeCoordXList } = this.planeObjByOp[side];
+      if (dir === 'L') planeIdxList = [planeIdxList[0], planeIdxList[3], planeIdxList[1], planeIdxList[2]];
 
-        planeCoordYList = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
-        planeCoordXList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
-
-        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
-        break;
-
-      case 'D':
-        planeIdxList = [1, 4, 3, 2];
-        if (dir === 'L') planeIdxList = [1, 2, 3, 4];
-
-        planeCoordYList = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]];
-        planeCoordXList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
-
-        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
-        break;
-
-      case 'R':
-        planeIdxList = [1, 0, 3, 5];
-        if (dir === 'L') planeIdxList = [1, 5, 3, 1];
-
-        planeCoordYList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
-        planeCoordXList = [[2, 2, 2], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
-
-        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
-        break;
-
-      case 'L':
-        planeIdxList = [1, 5, 3, 0];
-        if (dir === 'L') planeIdxList = [1, 0, 3, 5];
-
-        planeCoordYList = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]];
-        planeCoordXList = [[0, 0, 0], [2, 2, 2], [2, 2, 2], [2, 2, 2]];
-
-        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
-        break;
-
-      case 'F':
-        planeIdxList = [0, 2, 5, 4];
-        if (dir === 'L') planeIdxList = [0, 4, 5, 2];
-
-        planeCoordYList = [[2, 2, 2], [0, 1, 2], [0, 0, 0], [2, 1, 0]];
-        planeCoordXList = [[0, 1, 2], [0, 0, 0], [2, 1, 0], [2, 2, 2]];
-
-        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
-        break;
-
-      case 'B':
-        planeIdxList = [0, 4, 5, 2];
-        if (dir === 'L') planeIdxList = [0, 2, 5, 4];
-
-        planeCoordYList = [[0, 0, 0], [0, 1, 2], [2, 2, 2], [2, 1, 0]];
-        planeCoordXList = [[0, 1, 2], [0, 0, 0], [2, 1, 0], [2, 2, 2]];
-
-        this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
-        break;
-
-      case 'Q':
-        rl.emit('close');
+      this.turnByDirList(planeIdxList, planeCoordYList, planeCoordXList);
     }
   }
 
@@ -241,10 +215,8 @@ const inputPreprocessing = (...ops) => {
     } else if (op === '`') {
       pre.push(pre.pop() + '`');
       return pre;
-    } else if (op === '2') {
-      console.log(pre, pre[pre.length - 1]);
+    } else if (op === '2' && pre.length > 0) {
       pre.push(pre[pre.length - 1]);
-      console.log(pre);
       return pre;
     } else {
       throw('An invalid value was entered.');
@@ -255,43 +227,47 @@ const inputPreprocessing = (...ops) => {
   return ret;
 }
 
-const main = () => {
-  const cube = new Cube();
+const complete = (cube) => {
+  console.log('Congratuation~!!');
+  console.log('경과시간: ', cube.min + ':' + cube.sec );
+  console.log('조작개수: ', cube.turnCount);
+  process.exit(0);
+}
 
-  rl.on('complete', () => {
-    console.log('Congratuation~!!');
-    console.log('경과시간: ', cube.min + ':' + cube.sec );
-    console.log('조작개수: ', cube.turnCount);
-    process.exit(0);
-  })
+const execute = (ops, cube) => {
+  ops.forEach( op => {
+    let dir = op[op.length - 1] === '`' ? 'L' : 'R';
 
-  rl.on('execute', (ops) => {
-    // console.log("execute: ", ops);
-    
-    ops.forEach( op => {
-      let dir = op[op.length - 1] === '`' ? 'L' : 'R';
+    cube.turn(op[0], dir);
+    cube.print();
 
-      cube.turn(op[0], dir);
-      cube.print();
-
-      if (cube.complete()) {
-        rl.emit('complete');
-      }
-    })
-  });
-  
-  rl.on('preprocessing', (param) => {
-    // console.log("Event work!: ", param);
-    try {
-      const ops = inputPreprocessing(...param);
-      rl.emit('execute', ops);
-    } catch (msg) {
-      console.log('Error: ', msg);
+    if (cube.complete()) {
+      rl.emit('complete');
     }
   });
+}
 
-  userInput();
-  cube.timer();
+const main = () => {
+  const cube = new Cube();
+  try {
+    rl.on('complete', () => {
+      complete(cube);
+    })
+
+    rl.on('execute', (ops) => {
+      execute(ops, cube);
+    });
+    
+    rl.on('preprocessing', (param) => {
+        const ops = inputPreprocessing(...param);
+        rl.emit('execute', ops);
+    });
+
+    userInput();
+    cube.timer();
+  } catch (msg) {
+    console.log('Error: ', msg);
+  }
 }
 
 main();
